@@ -333,6 +333,61 @@ TEST_CASE_METHOD(
 }
 
 TEST_CASE_METHOD(
+    CMetadataFx,
+    "C API: Metadata, sub-millisecond writes",
+    "[capi][metadata][sub-millisecond]") {
+  int32_t one = 1;
+  int32_t two = 2;
+  const void* v_r = nullptr;
+  tiledb_datatype_t v_type;
+  uint32_t v_num;
+
+
+  // Run the test body 100 times
+  for (int i = 0; i < 100; i++) {
+    // Create and open array in write mode
+    create_default_array_1d();
+    tiledb_array_t* array;
+    int rc = tiledb_array_alloc(ctx_, array_name_.c_str(), &array);
+    REQUIRE(rc == TILEDB_OK);
+    rc = tiledb_array_open(ctx_, array, TILEDB_WRITE);
+    REQUIRE(rc == TILEDB_OK);
+
+    // Write to disk twice
+    rc = tiledb_array_put_metadata(ctx_, array, "aaa", TILEDB_INT32, 1, &one);
+    CHECK(rc == TILEDB_OK);
+    rc = tiledb_array_close(ctx_, array);
+    REQUIRE(rc == TILEDB_OK);
+    rc = tiledb_array_open(ctx_, array, TILEDB_WRITE);
+    REQUIRE(rc == TILEDB_OK);
+    rc = tiledb_array_put_metadata(ctx_, array, "aaa", TILEDB_INT32, 1, &two);
+    CHECK(rc == TILEDB_OK);
+    rc = tiledb_array_close(ctx_, array);
+    REQUIRE(rc == TILEDB_OK);
+    tiledb_array_free(&array);
+
+    // Open the array in read mode
+    rc = tiledb_array_alloc(ctx_, array_name_.c_str(), &array);
+    REQUIRE(rc == TILEDB_OK);
+    rc = tiledb_array_open(ctx_, array, TILEDB_READ);
+    REQUIRE(rc == TILEDB_OK);
+
+    // Read
+    rc = tiledb_array_get_metadata(ctx_, array, "aaa", &v_type, &v_num, &v_r);
+    CHECK(rc == TILEDB_OK);
+    CHECK(v_type == TILEDB_INT32);
+    CHECK(v_num == 1);
+    CHECK(*((const int32_t*)v_r) == 2);
+
+    // Cleanup
+    rc = tiledb_array_close(ctx_, array);
+    REQUIRE(rc == TILEDB_OK);
+    tiledb_array_free(&array);
+    remove_dir(array_name_, ctx_, vfs_);
+  }
+}
+
+TEST_CASE_METHOD(
     CMetadataFx, "C API: Metadata, UTF-8", "[capi][metadata][utf-8]") {
   // Create default array
   create_default_array_1d();
