@@ -80,11 +80,15 @@ jobs:
       ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: ${{ matrix.manylinux && 'true' || 'false' }}
 
     steps:
+      - name: Test runner
+        run: |
+          ls -la
       - uses: actions/setup-node@v4
         if: ${{ matrix.manylinux }}
         with:
           node-version: 20
       - name: Checkout TileDB
+        if: ${{ matrix.manylinux }}
         uses: actions/checkout@v4
       - name: 'Homebrew setup'
         run: brew install automake ninja
