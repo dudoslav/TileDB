@@ -80,9 +80,12 @@ jobs:
       ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: ${{ matrix.manylinux && 'true' || 'false' }}
 
     steps:
+      - uses: actions/setup-node@v4
+        if: ${{ matrix.manylinux }}
+        with:
+          node-version: 20
       - name: Checkout TileDB
-        # v4 uses node 20 which is incompatible with the libc version of the manylinux image
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: 'Homebrew setup'
         run: brew install automake ninja
         if: ${{ startsWith(matrix.os, 'macos-') == true }}
