@@ -83,19 +83,14 @@ jobs:
       - name: Manually Checkout TileDB
         if: ${{ matrix.manylinux }}
         run: |
-          git clone ${{ github.server_url }}/${{ github.repository }}.git -b ${{ github.ref_name }} ${{ github.workspace }}
+          git clone ${{ github.server_url }}/${{ github.repository }}.git -b ${{ github.ref_name }} .
+          ls -lah
       - name: Checkout TileDB
         if: ${{ ! matrix.manylinux }}
         uses: actions/checkout@v4
       - name: 'Homebrew setup'
         run: brew install automake ninja
         if: ${{ startsWith(matrix.os, 'macos-') == true }}
-      # - name: Export GitHub Actions cache variables
-      #   uses: actions/github-script@v6
-      #   with:
-      #     script: |
-      #       core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
-      #       core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
       - name: Set variables
         id: get-values
         run: |
@@ -114,6 +109,9 @@ jobs:
           echo "VCPKG_FORCE_SYSTEM_BINARIES=YES" >> $GITHUB_ENV
       - name: Configure TileDB
         run: |
+          ls -lah
+          export ACTIONS_CACHE_URL=${{ ACTIONS_CACHE_URL }}
+          export ACTIONS_RUNTIME_TOKEN=${{ ACTIONS_RUNTIME_TOKEN }}
           cmake -S . -B build \
             -DCMAKE_BUILD_TYPE=Release \
             -DBUILD_SHARED_LIBS=ON \
