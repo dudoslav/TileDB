@@ -91,6 +91,13 @@ jobs:
       - name: 'Homebrew setup'
         run: brew install automake ninja
         if: ${{ startsWith(matrix.os, 'macos-') == true }}
+      - name: Export github action cache variables
+        id: ghruntime
+        run: |
+          cat << EOF >> "${GITHUB_OUTPUT}"
+          ACTIONS_RUNTIME_TOKEN=${ACTIONS_RUNTIME_TOKEN}
+          ACTIONS_CACHE_URL=${ACTIONS_CACHE_URL}
+          EOF
       - name: Set variables
         id: get-values
         run: |
@@ -108,8 +115,10 @@ jobs:
           echo "/opt/_internal/cpython-3.9.20/bin" >> $GITHUB_PATH
           echo "VCPKG_FORCE_SYSTEM_BINARIES=YES" >> $GITHUB_ENV
       - name: Configure TileDB
+        env:
+          ACTIONS_RUNTIME_TOKEN: ${{ steps.ghruntime.outputs.ACTIONS_RUNTIME_TOKEN }}
+          ACTIONS_CACHE_URL: ${{ steps.ghruntime.outputs.ACTIONS_CACHE_URL }}
         run: |
-          ls -lah
           cmake -S . -B build \
             -DCMAKE_BUILD_TYPE=Release \
             -DBUILD_SHARED_LIBS=ON \
