@@ -83,7 +83,7 @@ jobs:
       - name: Test runner
         if: ${{ matrix.manylinux }}
         run: |
-          git clone ${{ github.server_url }}/${{ github.repository }}.git -b ${{ github.ref }} ${{ github.workspace }}
+          git clone ${{ github.server_url }}/${{ github.repository }}.git -b ${{ github.ref_name }} ${{ github.workspace }}
       - name: Checkout TileDB
         if: ${{ ! matrix.manylinux }}
         uses: actions/checkout@v4
