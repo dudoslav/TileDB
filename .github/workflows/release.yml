@@ -91,6 +91,8 @@ jobs:
       - name: 'Homebrew setup'
         run: brew install automake ninja
         if: ${{ startsWith(matrix.os, 'macos-') == true }}
+      - name: Expose GitHub Runtime
+        uses: crazy-max/ghaction-github-runtime@v3
       - name: Set variables
         id: get-values
         run: |
@@ -110,8 +112,6 @@ jobs:
       - name: Configure TileDB
         run: |
           ls -lah
-          export ACTIONS_CACHE_URL=${{ ACTIONS_CACHE_URL }}
-          export ACTIONS_RUNTIME_TOKEN=${{ ACTIONS_RUNTIME_TOKEN }}
           cmake -S . -B build \
             -DCMAKE_BUILD_TYPE=Release \
             -DBUILD_SHARED_LIBS=ON \
