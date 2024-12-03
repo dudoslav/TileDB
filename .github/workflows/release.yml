@@ -90,12 +90,12 @@ jobs:
       - name: 'Homebrew setup'
         run: brew install automake ninja
         if: ${{ startsWith(matrix.os, 'macos-') == true }}
-      - name: Export GitHub Actions cache variables
-        uses: actions/github-script@v6
-        with:
-          script: |
-            core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
-            core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
+      # - name: Export GitHub Actions cache variables
+      #   uses: actions/github-script@v6
+      #   with:
+      #     script: |
+      #       core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
+      #       core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
       - name: Set variables
         id: get-values
         run: |
@@ -133,13 +133,13 @@ jobs:
         env:
           TILEDB_PACKAGE_VERSION: ${{ steps.get-values.outputs.release_version }}
         run: cmake --build build -j4 --config Release --target package
-      - name: Upload release artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: release
-          path: |
-            build/tiledb-*.tar.gz*
-            build/tiledb-*.zip*
+      # - name: Upload release artifacts
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: release
+      #     path: |
+      #       build/tiledb-*.tar.gz*
+      #       build/tiledb-*.zip*
       - name: "Print log files (failed build only)"
         shell: bash
         run: |
