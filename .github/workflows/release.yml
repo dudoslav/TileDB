@@ -93,6 +93,7 @@ jobs:
         if: ${{ startsWith(matrix.os, 'macos-') == true }}
       - name: Export github action cache variables
         id: ghruntime
+        shell: bash
         run: |
           cat << EOF >> "${GITHUB_OUTPUT}"
           ACTIONS_RUNTIME_TOKEN=${ACTIONS_RUNTIME_TOKEN}
@@ -138,13 +139,13 @@ jobs:
         env:
           TILEDB_PACKAGE_VERSION: ${{ steps.get-values.outputs.release_version }}
         run: cmake --build build -j4 --config Release --target package
-      # - name: Upload release artifacts
-      #   uses: actions/upload-artifact@v3
-      #   with:
-      #     name: release
-      #     path: |
-      #       build/tiledb-*.tar.gz*
-      #       build/tiledb-*.zip*
+      - name: Upload release artifacts
+        uses: dudoslav/upload-artifact
+        with:
+          name: release
+          path: |
+            build/tiledb-*.tar.gz*
+            build/tiledb-*.zip*
       - name: "Print log files (failed build only)"
         shell: bash
         run: |
