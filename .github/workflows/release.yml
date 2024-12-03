@@ -140,7 +140,7 @@ jobs:
           TILEDB_PACKAGE_VERSION: ${{ steps.get-values.outputs.release_version }}
         run: cmake --build build -j4 --config Release --target package
       - name: Upload release artifacts
-        uses: dudoslav/upload-artifact
+        uses: dudoslav/upload-artifact@main
         with:
           name: release
           path: |
