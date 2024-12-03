@@ -81,14 +81,11 @@ jobs:
 
     steps:
       - name: Test runner
+        if: ${{ matrix.manylinux }}
         run: |
-          ls -la
-      - uses: actions/setup-node@v4
-        if: ${{ matrix.manylinux }}
-        with:
-          node-version: 20
+          git clone ${{ github.server_url }}/${{ github.repository }}.git -b ${{ github.ref }} ${{ github.workspace }}
       - name: Checkout TileDB
-        if: ${{ matrix.manylinux }}
+        if: ${{ ! matrix.manylinux }}
         uses: actions/checkout@v4
       - name: 'Homebrew setup'
         run: brew install automake ninja
